@@ -1,3 +1,23 @@
+update-manager (0.200.5-2.1blankon2) tambora; urgency=medium
+
+  * Add 011_not_show_first_run.patch 
+
+ -- Rahman Yusri Aftian <aftian@di.blankon.in>  Tue, 26 Jul 2016 07:12:52 +0700
+
+update-manager (0.200.5-2.1blankon1) suroboyo; urgency=low
+
+  * First upload for suroboyo
+
+ -- Mahyuddin <dotovr@di.blankon.in>  Sun, 03 Mar 2013 21:46:10 +0700
+
+update-manager (0.200.5-2.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Avoid manipulating the documentation build directory (closes: #655804).
+    - Patch thanks to Marcin Owsiany.
+
+ -- Michael Gilbert <mgilbert@debian.org>  Mon, 12 Nov 2012 03:25:18 +0000
+
 update-manager (0.200.5-2blankon2.1) tambora; urgency=medium
 
   * Rebuild 

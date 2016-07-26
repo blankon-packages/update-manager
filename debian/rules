@@ -14,11 +14,13 @@ build/update-manager-doc::
 	-mkdir -p $(CURDIR)/doc/source/_static
 	$(MAKE) -C $(CURDIR)/doc html
 	mkdir -p $(CURDIR)/debian/tmp/usr/share/doc/update-manager-doc
-	-rm $(CURDIR)/doc/build/html/_static/jquery.js
-	ln -s /usr/share/javascript/jquery/jquery.js \
-		$(CURDIR)/doc/build/html/_static/jquery.js
 	cp -r $(CURDIR)/doc/build/html \
 		$(CURDIR)/debian/tmp/usr/share/doc/update-manager-doc
+
+	# avoid manipulating the documentation build directory
+	-rm $(CURDIR)/debian/tmp/usr/share/doc/update-manager-doc/html/_static/jquery.js
+	ln -s /usr/share/javascript/jquery/jquery.js \
+		$(CURDIR)/debian/tmp/usr/share/doc/update-manager-doc/html/_static/jquery.js
 
 # copied from CDBS; I cannot use gnome.mk, for it includes autotools.mk
 # although this package does not use autotools; the build, thus, fails.

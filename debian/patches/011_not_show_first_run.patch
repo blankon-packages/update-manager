@@ -1,0 +1,12 @@
+diff -Naur update-manager-0.200.5.orig/data/update-manager.schemas.in update-manager-0.200.5/data/update-manager.schemas.in
+--- update-manager-0.200.5.orig/data/update-manager.schemas.in	2016-07-26 07:00:14.321935888 +0700
++++ update-manager-0.200.5/data/update-manager.schemas.in	2016-07-26 07:02:55.887761035 +0700
+@@ -100,7 +100,7 @@
+       <applyto>/apps/update-manager/first_run</applyto>
+       <owner>update-manager</owner>
+       <type>bool</type>
+-      <default>True</default>
++      <default>False</default>
+ 		
+       <locale name="C">
+         <short>First run welcome message</short>
