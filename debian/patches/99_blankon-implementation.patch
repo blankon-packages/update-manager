@@ -1,8 +1,8 @@
 diff -Naur update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/__init__.py update-manager-0.200.5/UpdateManager/DistSpecific/Blankon/__init__.py
 --- update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/__init__.py	1970-01-01 07:00:00.000000000 +0700
-+++ update-manager-0.200.5/UpdateManager/DistSpecific/Blankon/__init__.py	2012-05-26 00:55:50.374554295 +0700
-@@ -0,0 +1,60 @@
-+# UpdateManager/DistSpecific/Blankon/__init__.py
++++ update-manager-0.200.5/UpdateManager/DistSpecific/Blankon/__init__.py	2016-07-26 07:50:49.176055484 +0700
+@@ -0,0 +1,68 @@
++# UpdateManager/DistributionSpecific/Ubuntu/__init__.py
 +#
 +#  Copyright (c) 2009 Canonical
 +#                2009 Stephan Peijnik
@@ -24,17 +24,14 @@ diff -Naur update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/__init
 +#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
 +#  USA.
 +
-+""" Blankon-specific functionality. """
-+
-+import logging
++""" BlankOn-specific functionality. """
 +
 +from UpdateManager.DistSpecific import DistBase, UPDATE_CATEGORY
 +from UpdateManager.DistSpecific.Blankon.changelog import BlankonChangelogFetcher
 +
-+LOG = logging.getLogger('UpdateManager.Backend.Blankon')
-+
 +class BlankonDist(DistBase):
-+    """ Implementation of distribution-specific functionality for
++    """
++    Implementation of distribution-specific functionality for
 +    Blankon.
 +    """
 +    def __init__(self):
@@ -42,15 +39,22 @@ diff -Naur update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/__init
 +                          changelog_fetcher=BlankonChangelogFetcher,
 +                          distupgrade_check=False)
 +
++    @classmethod
++    def fetch_dist_info(cls):
++        """ Doesn't do anything for now """
++        # TODO: implement metarelease functionality
++        return None
++
 +    def get_update_category(self, pkg_info):
-+        """ Returns the update category for a given package """
++        """ Returns the update category """
 +        # We detect the update category using the
 +        # origin's label, archive name and whether its
 +        # trusted or not.
 +        label = pkg_info.get_candidate_origin_label()
++        archive = pkg_info.get_candidate_archive_name()
 +        origin = pkg_info.get_candidate_origin_name()
 +        trusted = pkg_info.candidate_origin_is_trusted()
-+
++        
 +        # Untrusted updates are most likely unofficial ones, so
 +        # we only need to check whether the source is trusted first.
 +        if not trusted or label != 'Blankon' or origin != 'Blankon':
@@ -60,15 +64,20 @@ diff -Naur update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/__init
 +            return UPDATE_CATEGORY.SECURITY
 +        elif archive.endswith('-updates'):
 +            return UPDATE_CATEGORY.RECOMMENDED
++        elif archive.endswith('-proposed'):
++            return UPDATE_CATEGORY.PROPOSED
++        elif archive.endswith('-backports'):
++            return UPDATE_CATEGORY.BACKPORT
 +
 +        return UPDATE_CATEGORY.DEFAULT
 diff -Naur update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/changelog.py update-manager-0.200.5/UpdateManager/DistSpecific/Blankon/changelog.py
 --- update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/changelog.py	1970-01-01 07:00:00.000000000 +0700
-+++ update-manager-0.200.5/UpdateManager/DistSpecific/Blankon/changelog.py	2012-05-26 00:59:49.362548106 +0700
++++ update-manager-0.200.5/UpdateManager/DistSpecific/Blankon/changelog.py	2016-07-26 08:00:58.795241284 +0700
 @@ -0,0 +1,47 @@
-+# UpdateManager/DistSpecific/Blankon/changelog.py
++# UpdateManager/DistSpecific/Ubuntu/changelog.py
 +#
 +#  Copyright (c) 2009 Stephan Peijnik
++#                2009 Canonical
 +#
 +#  Author: Stephan Peijnik <debian@sp.or.at>
 +#
@@ -87,7 +96,7 @@ diff -Naur update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/change
 +#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
 +#  USA.
 +
-+""" Blankon-specific functionality. """
++""" Blankon-speific changelog fetcher. """
 +
 +import logging
 +
@@ -105,32 +114,21 @@ diff -Naur update-manager-0.200.5.orig/UpdateManager/DistSpecific/Blankon/change
 +        if ':' in candidate_version:
 +            candidate_version = candidate_version[
 +                candidate_version.find(':')+1:]
-+        url = "http://arsip-dev.blankonlinux.or.id/blankon-debian/changelogs/pool/"
++        url = "http://arsip.blankonlinux.or.id/blankon/changelogs/pool/"
 +        candidate_uri = pkg_info.get_candidate_uri().split('/pool/', 1)[1]
 +        candidate_uri = candidate_uri[:candidate_uri.rfind('/')]
-+        url += '%s/%s_%s/%s_%s_%s/changelog' % (candidate_uri, srcpkg_name,
++        url += '%s/%s_%s/changelog' % (candidate_uri, srcpkg_name,
 +                                           candidate_version)
 +        LOG.debug("Downloading changelog for %s from %s.", srcpkg_name,
 +                  url)
-+        return url
-diff -Naur update-manager-0.200.5.orig/debian/update-manager-core.install update-manager-0.200.5/debian/update-manager-core.install
---- update-manager-0.200.5.orig/debian/update-manager-core.install	2012-05-26 00:37:34.054582687 +0700
-+++ update-manager-0.200.5/debian/update-manager-core.install	2012-05-26 02:25:49.794414461 +0700
-@@ -16,5 +16,6 @@
- debian/tmp/usr/lib/python*/*-packages/UpdateManager/Frontend/__init__.py
- debian/tmp/usr/lib/python*/*-packages/UpdateManager/Frontend/loader.py
- debian/tmp/usr/lib/python*/*-packages/UpdateManager/Frontend/GtkCommon/
-+debian/tmp/usr/lib/python*/*-packages/UpdateManager/DistSpecific/Blankon/
- debian/tmp/usr/lib/python*/*-packages/UpdateManager/DistSpecific/Debian/
- debian/tmp/usr/lib/python*/*-packages/UpdateManager/DistSpecific/Ubuntu/
 diff -Naur update-manager-0.200.5.orig/setup.py update-manager-0.200.5/setup.py
---- update-manager-0.200.5.orig/setup.py	2012-05-26 00:37:33.566582699 +0700
-+++ update-manager-0.200.5/setup.py	2012-05-26 01:53:33.606464604 +0700
+--- update-manager-0.200.5.orig/setup.py	2016-07-26 07:00:14.301935662 +0700
++++ update-manager-0.200.5/setup.py	2016-07-26 08:02:25.860247080 +0700
 @@ -22,6 +22,7 @@
                  'UpdateManager.Frontend.GtkCommon',
                  'UpdateManager.Backend',
                  'UpdateManager.DistSpecific',
-+                'UpdateManager.DistSpecific.Blankon',
++                'UpdateManager.DistSpecific.Blankon', 
                  'UpdateManager.DistSpecific.Debian',
                  'UpdateManager.DistSpecific.Ubuntu',
                  'UpdateManager.Util'

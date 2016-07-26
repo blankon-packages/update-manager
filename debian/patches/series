@@ -1,4 +1,4 @@
 01_update_translations.patch
 02_locale.format_suffix.patch
-99_implementation_blankon.patch
+99_blankon-implementation.patch
 011_not_show_first_run.patch
