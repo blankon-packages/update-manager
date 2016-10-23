@@ -1,3 +1,9 @@
+update-manager (0.200.5-2.1blankon3) tambora; urgency=medium
+
+  * Fix BlankOn component distro profile 
+
+ -- Mahyuddin <yudi.al@gmail.com>  Sun, 23 Oct 2016 16:52:08 +0700
+
 update-manager (0.200.5-2.1blankon2) tambora; urgency=medium
 
   * Add 011_not_show_first_run.patch 
